@@ -5,7 +5,8 @@
     "observations":{
       "CDEC": "calfews_src/data/input/calfews_src-data-sim.csv", 
       "CDEC_wet_dry": "calfews_src/data/input/calfews_src-data-wet-dry.csv",
-      "CDEC_short": "calfews_src/data/input/calfews_src-data.csv"
+      "CDEC_short": "calfews_src/data/input/calfews_src-data.csv",
+      "CDEC_1995_2023":"calfews_src/data/input/cord-sim_realtime.csv" 
        },
     "downscaled_19952005":{
       "VIC": "calfews_src/data/CA_FNF_climate_change/CA_FNF_ccsm4_rcp85_r1i1p1.csv",
@@ -73,7 +74,8 @@
     "observations":{
       "CDEC": "calfews_src-data-CDEC_19052016",
       "CDEC_wet_dry": "calfews_src-data-CDEC_wet_dry",
-      "CDEC_short": "calfews_src-data-CDEC_19052016.csv"
+      "CDEC_short": "calfews_src-data-CDEC_19052016.csv",
+      "CDEC_1995_2023":"calfews_src-data-CDEC_1005_2023" 
       },
     "downscaled_19952005":{
       "VIC": "calfews_src-data-VIC_19952005", 
@@ -141,7 +143,8 @@
     "observations":{
       "CDEC": 1905, 
       "CDEC_wet_dry": 1996,
-      "CDEC_short": 1996
+      "CDEC_short": 1996,
+      "CDEC_1995_2023":1995
       },
     "downscaled_19952005":{
       "VIC": 1996,
@@ -209,7 +212,8 @@
     "observations":{
       "CDEC": 2016,
       "CDEC_wet_dry": 1998,
-      "CDEC_short": 2016 
+      "CDEC_short": 2016,
+      "CDEC_1995_2023":2023 
       },
     "downscaled_19952005":{
       "VIC": 2005,
@@ -277,7 +281,8 @@
     "observations":{
       "CDEC": "10/1/1905",
       "CDEC_wet_dry": "10/1/1996",
-      "CDEC_short": "10/1/1996"
+      "CDEC_short": "10/1/1996",
+      "CDEC_1995_2023":"10/1/1995"
       },
     "downscaled_19952005":{
       "VIC": "1/1/1950",
@@ -345,7 +350,8 @@
     "observations":{
       "CDEC": "9/30/2016",
       "CDEC_wet_dry": "9/30/1998",
-      "CDEC_short": "9/30/2016" 
+      "CDEC_short": "9/30/2016",
+      "CDEC_1995_2023":"9/30/2023"
       },
     "downscaled_19952005":{
       "VIC": "12/31/2099", 
@@ -412,7 +418,8 @@
     "observations":{
       "CDEC": false,
       "CDEC_wet_dry": false,
-      "CDEC_short": true
+      "CDEC_short": true,
+      "CDEC_1995_2023": true
       },
     "downscaled_19952005":{
       "VIC": false,
@@ -480,7 +487,8 @@
     "observations":{
       "CDEC": true,
       "CDEC_wet_dry": true,
-      "CDEC_short": true
+      "CDEC_short": true,
+      "CDEC_1995_2023":true
       },
     "downscaled_19952005":{
       "VIC": false,
@@ -547,7 +555,8 @@
   "inflow_unit":{
     "observations":{
       "CDEC": "af",
-      "CDEC_wet_dry": "af"
+      "CDEC_wet_dry": "af",
+      "CDEC_1995_2023":"af"
       },
     "downscaled_19952005":{
       "VIC": "cfs",
