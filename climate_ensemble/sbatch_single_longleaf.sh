@@ -14,7 +14,7 @@ label=$1
 results=$2
 
 sed 's/sourcehere/'$label'/' runtime_params_climate_tmp.ini > runtime_params.ini
-results_base='/pine/scr/a/l/alh91/CALFEWS_results/'
+results_base='CALFEWS_results/'
 mkdir ${results_base}${results}
 cp runtime_params.ini ${results_base}${results}
 
