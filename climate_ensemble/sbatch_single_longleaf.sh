@@ -4,8 +4,8 @@
 #SBATCH --mem=8000
 #SBATCH --ntasks=1
 #SBATCH --job-name=namehere
-#SBATCH --output=/pine/scr/a/l/alh91/CALFEWS_results/climate_ensemble/outhere
-#SBATCH --error=/pine/scr/a/l/alh91/CALFEWS_results/climate_ensemble/errhere
+#SBATCH --output=job/out_%j.out
+#SBATCH --error=job/err_%j.err
 
 module load python/3.8.8
 source ../.venv_calfews_longleaf/bin/activate
