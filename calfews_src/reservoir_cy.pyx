@@ -788,11 +788,12 @@ cdef class Reservoir():
           else:
             one_year_runfnf = running_fnf[x]
           monthly_flow_predict = np.zeros(numYears)
+          print(f"Initialized monthly_flow type: {type(monthly_flow)}, shape: {monthly_flow.shape}")
           for yy in range(0,numYears):
             if monthly_flow[mm][yy] > self.epsilon:
               monthly_flow_predict[yy] = np.log(monthly_flow[mm][yy])
             else:
-              monthly_flow_predict = -3.0
+              monthly_flow_predict[yy] = -3.0
         else:
           monthly_flow_predict = np.zeros(numYears-1)
           one_year_runfnf = np.zeros(numYears-1)

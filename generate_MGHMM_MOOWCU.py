@@ -18,7 +18,7 @@ udict = {'dry_state_mean_multiplier': 1, 'wet_state_mean_multiplier': 1,\
          'covariance_matrix_dry_multiplier': 1, 'covariance_matrix_wet_multiplier': 1, \
          'transition_drydry_addition': 0, 'transition_wetwet_addition': 0}
 #### number of years for synthetic generation. Note this is one more than we will simulate, since this does calendar year but calfews cuts to water year.
-nYears = 1
+nYears = 3
 
 ### loop over MC samples & create a new synthetic trace for each, using MC number as seed
 for mc in range(numMC):
