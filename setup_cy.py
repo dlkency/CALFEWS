@@ -7,6 +7,7 @@ setup(
                                 'calfews_src/district_cy.pyx', 'calfews_src/inputter_cy.pyx',
                                 'calfews_src/model_cy.pyx', 'calfews_src/private_cy.pyx',
                                 'calfews_src/reservoir_cy.pyx', 'calfews_src/waterbank_cy.pyx',
-                                'calfews_src/participant_cy.pyx', 'main_cy.pyx'], 
+                                'calfews_src/participant_cy.pyx', 'main_cy.pyx'
+                                ], 
                                 annotate=False,language_level=3, include_path=['./', 'calfews_src/'])
 )

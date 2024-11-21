@@ -6,6 +6,7 @@ import pandas as pd
 import json
 from .util import *
 from .model_cy cimport Model
+from datetime import datetime, timedelta
 
 cdef class Reservoir():
 
@@ -58,12 +59,39 @@ cdef class Reservoir():
       #San Luis Reservoir is off-line so it doesn't need the full reservoir class parameter set contained in the KEY_properties.json files
       #self.Q = model.df[0]'HRO_pump'] * cfs_tafd
       self.dead_pool = 40
-      self.S[0] = 740.4
+      use_capacity = False
+      storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+      storage_start_date_actual = model.df[0].index[0]
+      
+      if storage_start_date in model.df_short[0].index: 
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date) 
+      elif storage_start_date_actual in model.df_short[0].index:
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date_actual) 
+      else:
+        use_capacity = True
+      if use_capacity:
+        self.S[0] = 740.4
+      else:
+        self.S[0] = model.df_short[0]['%s_storage' % key].iloc[storage_start_index] / 1000.0
+  	  
     elif self.key == "SLF":
       #San Luis - Federal portion
       #self.Q = model.df[0]'TRP_pump'] * cfs_tafd
       self.dead_pool = 40
-      self.S[0] = 174.4
+      use_capacity = False
+      storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+      storage_start_date_actual = model.df[0].index[0]
+      if storage_start_date in model.df_short[0].index: 
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date) 
+      elif storage_start_date_actual in model.df_short[0].index:
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date_actual) 
+      else:
+        use_capacity = True
+      if use_capacity:
+        self.S[0] = 174.4
+      else:
+        self.S[0] = model.df_short[0]['%s_storage' % key].iloc[storage_start_index] / 1000.0
+  	  
     elif self.key != "SNL":
       #for remaining reservoirs, load parameters from KEY_properties.json file (see reservoir\readme.txt
       for k,v in json.load(open('calfews_src/reservoir/%s_properties.json' % key)).items():
@@ -92,11 +120,17 @@ cdef class Reservoir():
       self.fnf = [_ / 1000000.0 for _ in model.df[0]['%s_fnf'% key].values]
       self.R[0] = 0
       use_capacity = False
-      storage_start_date = model.df[0].index[0]
+      storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+      storage_start_date_actual = model.df[0].index[0]
       if storage_start_date in model.df_short[0].index: 
-        storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date) 
+      elif storage_start_date_actual in model.df_short[0].index:
+        storage_start_index = model.df_short[0].index.get_loc(storage_start_date_actual) 
       else:
         use_capacity = True
+      print(use_capacity, flush=True)
+      print(storage_start_date_actual, flush=True)
+      print(storage_start_date, flush=True)
       if use_capacity:
         self.S[0] = self.capacity
         self.EOS_target = (self.capacity - 1000.0)/2 + 1000.0

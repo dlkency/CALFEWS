@@ -398,6 +398,7 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   covariance_matrix_dry = np.loadtxt(mghmm_folder + 'covariance_matrix_dry.txt')
   covariance_matrix_wet = np.loadtxt(mghmm_folder + 'covariance_matrix_wet.txt')
   transition_matrix = np.loadtxt(mghmm_folder + 'transition_matrix.txt')
+  hidden_states = np.loadtxt(mghmm_folder + 'hidden_states.txt')
 
   # Apply mean multipliers
   dry_state_means_sampled = dry_state_means * uncertainty_dict['dry_state_mean_multiplier']
@@ -428,9 +429,14 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   unconditional_dry = pi[0]
   # unconditional_wet = pi[1]
 
+  # AnnualQ = pd.read_csv(mghmm_folder+"historical_annual_streamflow_all_locations.csv")
+  # logAnnualQ = np.log(AnnualQ)
+  # data_2024 = logAnnualQ.iloc[-1, :].values
   logAnnualQ_s = np.zeros([nYears, nSites])
+  # logAnnualQ_s[0, :] = data_2024
 
   states = np.empty([np.shape(logAnnualQ_s)[0]])
+
   if rng.uniform() <= unconditional_dry:
     states[0] = 0
     logAnnualQ_s[0, :] = rng.multivariate_normal(np.reshape(dry_state_means_sampled, -1),
@@ -459,18 +465,20 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   #############################################Daily Disaggregation######################
 
   ### read in pre - normalized data
-  calfews_data = pd.read_csv(mghmm_folder + "calfews_src-data-sim-agg_norm.csv")
+  # calfews_data = pd.read_csv(mghmm_folder + "calfews_src-data-sim-agg_norm.csv")
+  calfews_data = pd.read_csv(mghmm_folder + "cord_sim_realtime_normalized.csv")
 
   yearly_sum = calfews_data.groupby(['Year']).sum()
   yearly_sum = yearly_sum.reset_index()
 
   # Import historic annual flows
   AnnualQ_h = pd.read_csv(mghmm_folder + "AnnualQ_h.csv", header=None)
+  AnnualQ_h=AnnualQ_h*43560  # convert from cfs to acre-feet
 
   # Identify number of years in synthetic & historical sample
   N_s = len(AnnualQ_s)
   N_h = len(AnnualQ_h)
-
+  
   # Find closest year for each synthetic sample
   index = np.zeros(N_s)
 

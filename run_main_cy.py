@@ -22,7 +22,7 @@ if cluster_mode:
   results_folder = scratch_dir + results_folder + '/'
 else:
   results_base = 'results/' + results_folder + '/'
-
+print('Results folder:', results_folder)
 ### if initialized main_cy object given, load it in
 save_init = results_folder + '/main_cy_init.pkl'
 
@@ -68,7 +68,7 @@ if redo_init == 1:
 if run_sim == 1:
   ### main simulation loop
   a = main_cy_obj.run_sim_py(start_time)
-  print ('Simulation complete,', datetime.now() - start_time)
+  print ('Simulation complete,  right?', datetime.now() - start_time)
   sys.stdout.flush()
 
   if a == 0:
