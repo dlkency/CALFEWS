@@ -1,7 +1,7 @@
 #!/bin/bash
 
 count=0
-total_jobs=100
+total_jobs=3
 
 for (( label=1; label<=total_jobs; label++ ))
 do

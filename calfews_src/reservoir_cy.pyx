@@ -33,7 +33,8 @@ cdef class Reservoir():
 
     self.T = model.T
     self.days_through_month = [60, 91, 122, 150, 181]
-    self.hist_wyt = ['W', 'W', 'W', 'AN', 'D', 'D', 'AN', 'BN', 'AN', 'W', 'D', 'C', 'D', 'BN', 'W', 'BN', 'D', 'C', 'C', 'AN']
+    #self.hist_wyt = ['W', 'W', 'W', 'AN', 'D', 'D', 'AN', 'BN', 'AN', 'W', 'D', 'C', 'D', 'BN', 'W', 'BN', 'D', 'C', 'C', 'AN']
+    self.hist_wyt = ['W', 'W', 'W', 'W', 'AN', 'D', 'D', 'AN', 'BN', 'AN', 'W', 'D', 'C', 'D', 'BN', 'W', 'BN', 'D', 'C', 'C', 'BN', 'W', 'BN', 'W', 'D', 'C', 'C', 'W']
 
     self.key = key
     self.name = name
@@ -128,9 +129,9 @@ cdef class Reservoir():
         storage_start_index = model.df_short[0].index.get_loc(storage_start_date_actual) 
       else:
         use_capacity = True
-      print(use_capacity, flush=True)
-      print(storage_start_date_actual, flush=True)
-      print(storage_start_date, flush=True)
+      #print(use_capacity, flush=True)
+      #print(storage_start_date_actual, flush=True)
+      #print(storage_start_date, flush=True)
       if use_capacity:
         self.S[0] = self.capacity
         self.EOS_target = (self.capacity - 1000.0)/2 + 1000.0
@@ -822,7 +823,7 @@ cdef class Reservoir():
           else:
             one_year_runfnf = running_fnf[x]
           monthly_flow_predict = np.zeros(numYears)
-          print(f"Initialized monthly_flow type: {type(monthly_flow)}, shape: {monthly_flow.shape}")
+          #print(f"Initialized monthly_flow type: {type(monthly_flow)}, shape: {monthly_flow.shape}")
           for yy in range(0,numYears):
             if monthly_flow[mm][yy] > self.epsilon:
               monthly_flow_predict[yy] = np.log(monthly_flow[mm][yy])
