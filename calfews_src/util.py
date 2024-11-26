@@ -6,6 +6,7 @@ import json
 from itertools import compress
 import gc
 import sys
+from hmmlearn import hmm
 
 cfs_tafd = 2.29568411*10**-5 * 86400 / 1000
 tafd_cfs = 1000 / 86400 * 43560
@@ -380,7 +381,20 @@ def get_results_sensitivity_number_outside_model(results_file, sensitivity_numbe
 
     return df_data
 
-
+def regularize_covariance(covariance_matrix, epsilon=1e-6):
+    """
+    Regularizes a full covariance matrix by adding a small value to its diagonal.
+    Handles the provided dimensions (2, 1, 15, 15).
+    """
+    if covariance_matrix.ndim == 4:  # Dimensions (2, 1, 15, 15)
+        for i in range(covariance_matrix.shape[0]):  # Iterate over the components
+            for j in range(covariance_matrix.shape[1]):  # Iterate over the mixtures (although just 1 here)
+                # print(f"DEBUG: Covariance matrix for state {i}, mixture {j} before regularization:\n{covariance_matrix[i, j]}")
+                covariance_matrix[i, j] += epsilon * np.eye(covariance_matrix.shape[2])
+                # print(f"DEBUG: Covariance matrix for state {i}, mixture {j} after regularization:\n{covariance_matrix[i, j]}")
+    else:
+        raise ValueError("Unexpected covariance matrix dimensions for 'full' covariance type.")
+    return covariance_matrix
 
 ### generate a single synthetic realizaton of fnfs using MGHMM. Adapted from script by Rohini Gupta.
 def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
@@ -390,15 +404,45 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
 
   # Static Parameters
   nSites = 15
-
-  # Import stationary parameters
   mghmm_folder = 'calfews_src/data/MGHMM_synthetic/calfews_mhmm_5112022/'
-  dry_state_means = np.loadtxt(mghmm_folder + 'dry_state_means.txt')
-  wet_state_means = np.loadtxt(mghmm_folder + 'wet_state_means.txt')
-  covariance_matrix_dry = np.loadtxt(mghmm_folder + 'covariance_matrix_dry.txt')
-  covariance_matrix_wet = np.loadtxt(mghmm_folder + 'covariance_matrix_wet.txt')
-  transition_matrix = np.loadtxt(mghmm_folder + 'transition_matrix.txt')
-  hidden_states = np.loadtxt(mghmm_folder + 'hidden_states.txt')
+  # # Import stationary parameters
+  AnnualQ = pd.read_csv(mghmm_folder +"historical_annual_streamflow_all_locations.csv")
+  logAnnualQ = np.log(AnnualQ)
+  hmm_model = hmm.GMMHMM(n_components=2, n_iter=1000,covariance_type='full').fit(logAnnualQ)
+
+  # # #Pull out some model parameters
+  mus = np.array(hmm_model.means_)
+  weights=np.array(hmm_model.weights_)
+  P = np.array(hmm_model.transmat_)
+
+  # Ensure covariance matrices are properly structured before prediction
+  hmm_model.covars_ = regularize_covariance(hmm_model.covars_)
+
+  hidden_states = hmm_model.predict(logAnnualQ)
+  #Dry state doesn't always come first,but we want it to be, so flip if it isn't
+  if mus[0][0][0] > mus[1][0][0]:
+          mus = np.flipud(mus)
+          P = np.fliplr(np.flipud(P))
+          covariance_matrix_dry=hmm_model.covars_[[1]].reshape(nSites,nSites)
+          covariance_matrix_wet=hmm_model.covars_[[0]].reshape(nSites,nSites)
+          hidden_states=1-hidden_states
+  else:
+          covariance_matrix_dry=hmm_model.covars_[[0]].reshape(nSites,nSites)
+          covariance_matrix_wet=hmm_model.covars_[[1]].reshape(nSites,nSites)        
+
+  #Redefine variables
+  dry_state_means=mus[0,:]
+  wet_state_means=mus[1,:]
+  transition_matrix=P
+
+
+  
+  # dry_state_means = np.loadtxt(mghmm_folder + 'dry_state_means.txt')
+  # wet_state_means = np.loadtxt(mghmm_folder + 'wet_state_means.txt')
+  # covariance_matrix_dry = np.loadtxt(mghmm_folder + 'covariance_matrix_dry.txt')
+  # covariance_matrix_wet = np.loadtxt(mghmm_folder + 'covariance_matrix_wet.txt')
+  # transition_matrix = np.loadtxt(mghmm_folder + 'transition_matrix.txt')
+  # hidden_states = np.loadtxt(mghmm_folder + 'hidden_states.txt')
 
   # Apply mean multipliers
   dry_state_means_sampled = dry_state_means * uncertainty_dict['dry_state_mean_multiplier']
@@ -406,11 +450,12 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
 
   # Apply covariance multipliers
   covariance_matrix_dry_sampled = covariance_matrix_dry * uncertainty_dict['covariance_matrix_dry_multiplier']
-
+  covariance_matrix_dry_sampled += 1e-6 * np.eye(covariance_matrix_dry_sampled.shape[0])
   for j in range(nSites):
     covariance_matrix_dry_sampled[j, j] = covariance_matrix_dry_sampled[j, j] * uncertainty_dict['covariance_matrix_dry_multiplier']
 
   covariance_matrix_wet_sampled = covariance_matrix_wet * uncertainty_dict['covariance_matrix_wet_multiplier']
+  covariance_matrix_wet_sampled += 1e-6 * np.eye(covariance_matrix_wet_sampled.shape[0])
 
   for j in range(nSites):
     covariance_matrix_wet_sampled[j, j] = covariance_matrix_wet_sampled[j, j] * uncertainty_dict['covariance_matrix_wet_multiplier']
@@ -429,12 +474,8 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   unconditional_dry = pi[0]
   # unconditional_wet = pi[1]
 
-  # AnnualQ = pd.read_csv(mghmm_folder+"historical_annual_streamflow_all_locations.csv")
-  # logAnnualQ = np.log(AnnualQ)
-  # data_2024 = logAnnualQ.iloc[-1, :].values
-  logAnnualQ_s = np.zeros([nYears, nSites])
-  # logAnnualQ_s[0, :] = data_2024
 
+  logAnnualQ_s = np.zeros([nYears, nSites])
   states = np.empty([np.shape(logAnnualQ_s)[0]])
 
   if rng.uniform() <= unconditional_dry:
@@ -461,6 +502,8 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
                                                          covariance_matrix_wet_sampled)
 
   AnnualQ_s = np.exp(logAnnualQ_s)
+  binary_states = states.tolist()  # List of 0s and 1s
+
 
   #############################################Daily Disaggregation######################
 
@@ -529,7 +572,7 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   if drop_date:
     DailyQ_s.drop(['Year','Month','Day','realization'], axis=1, inplace=True)
  
-  return DailyQ_s
+  return DailyQ_s, binary_states, closest_year
 
 
 
