@@ -14,7 +14,7 @@ fileend = '.csv'
 numMC = 100
 
 ### uncertainties. these are all set to baseline value for MOO/WCU experiment (as opposed to DU experiment to come in next paper)
-udict = {'dry_state_mean_multiplier': 1, 'wet_state_mean_multiplier': 1,\
+udict = {'dry_state_mean_multiplier': 0.95, 'wet_state_mean_multiplier': 1,\
          'covariance_matrix_dry_multiplier': 1, 'covariance_matrix_wet_multiplier': 1, \
          'transition_drydry_addition': 0, 'transition_wetwet_addition': 0}
 #### number of years for synthetic generation. Note this is one more than we will simulate, since this does calendar year but calfews cuts to water year.
