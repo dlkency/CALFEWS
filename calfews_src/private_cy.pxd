@@ -6,7 +6,7 @@ cdef class Private():
   cdef:
     public double in_district_direct_recharge, recovery_fraction, use_recharge, use_recovery, extra_leiu_recovery, \
                 max_recovery, max_leiu_exchange, total_banked_storage, recharge_rate, recovery_capacity_remain, \
-                current_recharge_storage, banking_risk_level, total_acreage, epsilon
+                current_recharge_storage, banking_risk_level, total_acreage, epsilon, initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool
 
     public int is_Canal, is_District, is_Private, is_Waterbank, is_Reservoir, turnback_use, thismonthuse, monthusecounter, \
                 monthemptycounter, iter_count, age_death, T, district_list_len
@@ -46,6 +46,8 @@ cdef class Private():
   cdef (double, double) update_balance(self, int t, int wateryear, double water_available, double projected_allocation, double current_water, str key, double tot_carryover, str balance_type, str district_name, dict project_contract, dict rights)
 
   cdef (double, double) calc_carryover(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights)
+
+  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool)
 
   cdef void open_recovery(self, int t, int dowy, int wateryear, int number_years, str wyt, int use_delivery_tolerance, double additional_carryover)
 

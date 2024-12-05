@@ -1032,7 +1032,7 @@ struct __pyx_opt_args_11calfews_src_11district_cy_8District_set_demand_priority 
   PyObject *message;
 };
 
-/* "district_cy.pxd":80
+/* "district_cy.pxd":82
  *   cdef double record_direct_delivery(self, double delivery, int wateryear)
  * 
  *   cdef (double, double, double) set_deliveries(self, dict priorities, dict type_fractions, list type_list, str search_type, int toggle_district_recharge, str member_name, int wateryear)             # <<<<<<<<<<<<<<
@@ -1093,7 +1093,7 @@ struct __pyx_opt_args_11calfews_src_8model_cy_5Model_northern_initialization_rou
 struct __pyx_opt_args_11calfews_src_8model_cy_5Model_southern_initialization_routine;
 struct __pyx_opt_args_11calfews_src_8model_cy_5Model_initialize_water_districts;
 
-/* "model_cy.pxd":70
+/* "model_cy.pxd":72
  *   cdef (double, double) delivery_recovery(self, list contract_list, Canal canal, lookback_range, int starting_point, dict paper_fractions, double direct_recovery, str flow_dir, list type_list, list priority_list, str contract_canal, str delivery_loc_name, int dowy, int wateryear, list canals_passed_through) except *
  * 
  *   cdef (double, double) flood_operations(self, int t, int m, int dowy, int wateryear, Reservoir reservoir, str flow_type, int overflow_toggle, str wyt, double prev_flood_release, str message=*) except *             # <<<<<<<<<<<<<<
@@ -1105,7 +1105,7 @@ struct __pyx_opt_args_11calfews_src_8model_cy_5Model_flood_operations {
   PyObject *message;
 };
 
-/* "model_cy.pxd":82
+/* "model_cy.pxd":84
  *   cdef void set_canal_direction(self, str flow_type)
  * 
  *   cdef (int, int, int, int, double, double) simulate_south(self, int t, double hro_pump, double trp_pump, double swp_alloc, double cvp_alloc, dict proj_surplus, dict max_pumping, double swp_forgone, double cvp_forgone, double swp_AF, double cvp_AF, double swp_AS, double cvp_AS, str wyt, str wytSC, dict max_tax_free, dict flood_release, dict flood_volume) except *             # <<<<<<<<<<<<<<
@@ -1121,7 +1121,7 @@ struct __pyx_ctuple_int__and_int__and_int__and_int__and_double__and_double {
   double f5;
 };
 
-/* "model_cy.pxd":102
+/* "model_cy.pxd":104
  *   cdef tuple proj_gains(self, int t, int dowy, int m, int year_index)
  * 
  *   cdef (int, int, double, double, double) find_pumping_release(self, int m, int da, int year_index, int start_storage, dict month_demand, dict month_demand_must_fill, dict expected_pumping, double projected_carryover, double current_carryover, str wyt, int t, str key)             # <<<<<<<<<<<<<<
@@ -1136,7 +1136,7 @@ struct __pyx_ctuple_int__and_int__and_double__and_double__and_double {
   double f4;
 };
 
-/* "model_cy.pxd":105
+/* "model_cy.pxd":107
  * 
  * ######### init
  *   cdef tuple northern_initialization_routine(self, scenario=*)             # <<<<<<<<<<<<<<
@@ -1148,7 +1148,7 @@ struct __pyx_opt_args_11calfews_src_8model_cy_5Model_northern_initialization_rou
   PyObject *scenario;
 };
 
-/* "model_cy.pxd":111
+/* "model_cy.pxd":113
  *   cdef void initialize_delta_ops(self) except *
  * 
  *   cdef void southern_initialization_routine(self, scenario=*) except *             # <<<<<<<<<<<<<<
@@ -1160,7 +1160,7 @@ struct __pyx_opt_args_11calfews_src_8model_cy_5Model_southern_initialization_rou
   PyObject *scenario;
 };
 
-/* "model_cy.pxd":119
+/* "model_cy.pxd":121
  *   cdef void predict_delta_gains(self) except *
  * 
  *   cdef void initialize_water_districts(self, scenario=*) except *             # <<<<<<<<<<<<<<
@@ -1419,6 +1419,10 @@ struct __pyx_obj_11calfews_src_11district_cy_District {
   double current_recharge_storage;
   double current_requested;
   double epsilon;
+  double initial_delivery;
+  double initial_carryover;
+  double initial_paper_balance;
+  double initial_turnback_pool;
   int is_Canal;
   int is_District;
   int is_Private;
@@ -1526,6 +1530,10 @@ struct __pyx_obj_11calfews_src_10private_cy_Private {
   double banking_risk_level;
   double total_acreage;
   double epsilon;
+  double initial_delivery;
+  double initial_carryover;
+  double initial_paper_balance;
+  double initial_turnback_pool;
   int is_Canal;
   int is_District;
   int is_Private;
@@ -2080,6 +2088,7 @@ struct __pyx_vtabstruct_11calfews_src_11district_cy_District {
   void (*adjust_recovery)(struct __pyx_obj_11calfews_src_11district_cy_District *, double, PyObject *, int);
   __pyx_ctuple_double__and_double (*update_balance)(struct __pyx_obj_11calfews_src_11district_cy_District *, int, int, double, double, double, PyObject *, double, PyObject *);
   __pyx_ctuple_double__and_double (*calc_carryover)(struct __pyx_obj_11calfews_src_11district_cy_District *, double, int, PyObject *, PyObject *);
+  __pyx_ctuple_double__and_double (*calc_carryover_from_pre)(struct __pyx_obj_11calfews_src_11district_cy_District *, double, int, PyObject *, PyObject *, double, double, double, double);
   void (*open_recovery)(struct __pyx_obj_11calfews_src_11district_cy_District *, int, int, int, double);
   void (*open_recharge)(struct __pyx_obj_11calfews_src_11district_cy_District *, int, int, int, int, int, PyObject *, double, double, PyObject *, PyObject *, PyObject *, double);
   double (*get_urban_recovery_target)(struct __pyx_obj_11calfews_src_11district_cy_District *, int, int, int, PyObject *, PyObject *, double, int, int);
@@ -2121,6 +2130,7 @@ struct __pyx_vtabstruct_11calfews_src_10private_cy_Private {
   void (*adjust_recovery)(struct __pyx_obj_11calfews_src_10private_cy_Private *, double, PyObject *, int);
   __pyx_ctuple_double__and_double (*update_balance)(struct __pyx_obj_11calfews_src_10private_cy_Private *, int, int, double, double, double, PyObject *, double, PyObject *, PyObject *, PyObject *, PyObject *);
   __pyx_ctuple_double__and_double (*calc_carryover)(struct __pyx_obj_11calfews_src_10private_cy_Private *, double, int, PyObject *, PyObject *, PyObject *, PyObject *, PyObject *);
+  __pyx_ctuple_double__and_double (*calc_carryover_from_pre)(struct __pyx_obj_11calfews_src_10private_cy_Private *, double, int, PyObject *, PyObject *, PyObject *, PyObject *, PyObject *, double, double, double, double);
   void (*open_recovery)(struct __pyx_obj_11calfews_src_10private_cy_Private *, int, int, int, int, PyObject *, int, double);
   void (*open_recharge)(struct __pyx_obj_11calfews_src_10private_cy_Private *, int, int, int, int, int, PyObject *, double, double, PyObject *, PyObject *, PyObject *, double, int);
   double (*get_urban_recovery_target)(struct __pyx_obj_11calfews_src_10private_cy_Private *, int, int, int, PyObject *, PyObject *, double, int, int, PyObject *);
@@ -2196,6 +2206,7 @@ struct __pyx_vtabstruct_11calfews_src_8model_cy_Model {
   double (*get_restricted_district_access)(struct __pyx_obj_11calfews_src_8model_cy_Model *, PyObject *, struct __pyx_obj_11calfews_src_11district_cy_District *);
   double (*set_restricted_district_access)(struct __pyx_obj_11calfews_src_8model_cy_Model *, PyObject *, struct __pyx_obj_11calfews_src_11district_cy_District *, double);
   void (*find_node_demand_bank)(struct __pyx_obj_11calfews_src_8model_cy_Model *, struct __pyx_obj_11calfews_src_12waterbank_cy_Waterbank *, struct __pyx_obj_11calfews_src_8canal_cy_Canal *, int, PyObject *, PyObject *, PyObject *, int, int, PyObject *, PyObject *, PyObject *);
+  void (*initialize_district_contract_carryovers)(struct __pyx_obj_11calfews_src_8model_cy_Model *);
   __pyx_ctuple_double__and_double (*delivery_recovery)(struct __pyx_obj_11calfews_src_8model_cy_Model *, PyObject *, struct __pyx_obj_11calfews_src_8canal_cy_Canal *, PyObject *, int, PyObject *, double, PyObject *, PyObject *, PyObject *, PyObject *, PyObject *, int, int, PyObject *);
   __pyx_ctuple_double__and_double (*flood_operations)(struct __pyx_obj_11calfews_src_8model_cy_Model *, int, int, int, int, struct __pyx_obj_11calfews_src_12reservoir_cy_Reservoir *, PyObject *, int, PyObject *, double, struct __pyx_opt_args_11calfews_src_8model_cy_5Model_flood_operations *__pyx_optional_args);
   void (*spill_reservoir)(struct __pyx_obj_11calfews_src_8model_cy_Model *, int, int, struct __pyx_obj_11calfews_src_12reservoir_cy_Reservoir *, double, double);

@@ -24,6 +24,7 @@ import sys
 import os
 from configobj import ConfigObj
 import json
+import h5py
 from distutils.util import strtobool
 from cpython.exc cimport PyErr_CheckSignals
 from calfews_src.model_cy cimport Model
@@ -162,7 +163,10 @@ cdef class main_cy():
         os.remove(self.results_folder + '/' + new_inputs.export_series[self.flow_input_type][self.flow_input_source]  + "_0.csv")
       except:
         pass
-    gc.collect()    
+    gc.collect()
+    use_validation_init = True
+    if use_validation_init:    
+      self.modelso.initialize_district_contract_carryovers()
 
     return 0
 

@@ -64,6 +64,8 @@ cdef class Model():
   cdef double set_restricted_district_access(self, list canals_passed_through, District district, double deliveries) except *
   
   cdef void find_node_demand_bank(self, Waterbank bank_node, Canal canal, int canal_loc, list contract_list, list priority_list, str contract_canal, int dowy, int wateryear, str search_type, list type_list, list canals_passed_through) except *
+
+  cdef void initialize_district_contract_carryovers(self)
   
   cdef (double, double) delivery_recovery(self, list contract_list, Canal canal, lookback_range, int starting_point, dict paper_fractions, double direct_recovery, str flow_dir, list type_list, list priority_list, str contract_canal, str delivery_loc_name, int dowy, int wateryear, list canals_passed_through) except *
   

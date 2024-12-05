@@ -10,7 +10,7 @@ cdef class District():
                 direct_recovery_delivery, pre_flood_demand, tot_leiu_recovery_use, leiu_trade_cap, loss_rate, initial_table_a, \
                 total_banked_storage, min_direct_recovery, turnback_sales, turnback_purchases, annual_private_pumping, \
                 irrseasondemand, recharge_rate, last_days_demand_regression_error, recovery_capacity_remain, table_a_request, \
-                current_recharge_storage, current_requested, epsilon
+                current_recharge_storage, current_requested, epsilon, initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool
 
     public int is_Canal, is_District, is_Private, is_Waterbank, is_Reservoir, T, turnback_use, must_fill, seasonal_connection, \
                 thismonthuse, monthusecounter, monthemptycounter, has_private, has_pesticide, has_pmp, k_close_wateryear, iter_count, \
@@ -56,6 +56,8 @@ cdef class District():
   cdef (double, double) update_balance(self, int t, int wateryear, double water_available, double projected_allocation, double current_water, str key, double tot_carryover, str balance_type)
 
   cdef (double, double) calc_carryover(self, double existing_balance, int wateryear, str balance_type, str key)
+
+  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool)
 
   cdef void open_recovery(self, int t, int dowy, int wateryear, double target_eoy)
 

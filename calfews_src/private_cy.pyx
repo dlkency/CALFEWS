@@ -520,7 +520,26 @@ cdef class Private():
     self.paper_balance[district_name][key] = 0.0
 	
     return reallocated_water, carryover
-		
+
+  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool):
+    #at the end of each wateryear, we tally up the full allocation to the contract, how much was used (and moved around in other balances - carryover, 'paper balance' and turnback_pools) to figure out how much each district can 'carryover' to the next year
+    cdef:
+      double annual_allocation, max_carryover, reallocated_water, carryover
+
+    if balance_type == 'contract':
+      annual_allocation = existing_balance*project_contract[key]*self.private_fraction[district_name][wateryear]  - initial_delivery + initial_carryover + initial_paper_balance + initial_turnback_pool 
+      max_carryover = self.contract_carryover_list[district_name][key]
+    elif balance_type == 'right':
+      annual_allocation = existing_balance*rights[key]['capacity']*self.private_fraction[district_name][wateryear]  - initial_delivery + initial_carryover + initial_paper_balance + initial_turnback_pool 
+      max_carryover = self.contract_carryover_list[district_name][key]
+	  
+    reallocated_water = max(annual_allocation - max_carryover, 0.0)
+    carryover = min(max_carryover, annual_allocation)
+    self.carryover[district_name][key] = carryover
+    self.turnback_pool[district_name][key] = 0.0	
+    self.paper_balance[district_name][key] = 0.0
+	
+    return reallocated_water, carryover	
 #####################################################################################################################
 #####################################################################################################################
 

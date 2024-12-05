@@ -7,6 +7,7 @@ import calendar
 import json
 import matplotlib.pyplot as plt
 import time
+import h5py
 from .util import *
 from .reservoir_cy cimport Reservoir
 from .delta_cy cimport Delta
@@ -16,6 +17,7 @@ from .private_cy cimport Private
 from .waterbank_cy cimport Waterbank
 from .contract_cy cimport Contract
 from .participant_cy cimport Participant
+from collections import Counter
 
 
 cdef class Model():
@@ -5602,6 +5604,113 @@ cdef class Model():
 #####################################################################################################################
 #####################################################################################################################
 #####################################################################################################################
+
+  cdef void initialize_district_contract_carryovers(self):
+    ### add something to read validation hdf5 file
+    cdef:
+      double initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool, initial_allocation
+      str trace, delivery_key, carryover_key, paper_key, turnback_key, allocation_key
+      District district_obj
+      Private private_obj
+      Contract contract_obj
+      list new_columns 
+      dict column_counts 
+  
+    trace = "results/short_test/results.hdf5" 
+    datDaily = get_results_sensitivity_number_outside_model(trace, '')
+    
+    new_columns = []
+    column_counts = dict(Counter(datDaily.columns))
+
+    for col in datDaily.columns:
+      if column_counts[col] > 1:
+        new_columns.append(f"{col}_{column_counts[col]}")
+        column_counts[col] -= 1 
+      else:
+        new_columns.append(col)
+
+    datDaily.columns = new_columns
+    
+    ##Reset contracts for the next water year, distribute unused contract water into carryover flows/ next year's contract allocation
+    
+    for contract_obj in self.contract_list:
+      contract_obj.tot_carryover = 0.0
+      contract_obj.tot_new_alloc = 0.0
+      for district_obj in self.district_list:
+        use_contract = 0
+        for contract_key in self.contract_keys:
+          if contract_key == contract_obj.name:
+            use_contract = 1
+        if use_contract == 1:
+          delivery_key = f"{district_obj.name}_{contract_obj.name}_delivery"
+          carryover_key = f"{district_obj.name}_{contract_obj.name}_carryover"
+          paper_key = f"{district_obj.name}_{contract_obj.name}_paper"
+          turnback_key = f"{district_obj.name}_{contract_obj.name}_turnback"
+          allocation_key = f"{contract_obj.name}_allocation"
+          if delivery_key in datDaily.columns:
+            initial_delivery = datDaily[delivery_key].iloc[-1]
+          else:
+            initial_delivery = 0.0
+          if carryover_key in datDaily.columns:
+            initial_carryover = datDaily[carryover_key].iloc[-1]
+          else:
+            initial_carryover = 0.0  
+          if paper_key in datDaily.columns:
+            initial_paper_balance = datDaily[paper_key].iloc[-1]
+          else:
+            initial_paper_balance = 0.0
+          if turnback_key in datDaily.columns:
+            initial_turnback_pool = datDaily[turnback_key].iloc[-1]
+          else:
+            initial_turnback_pool = 0.0
+          if allocation_key in datDaily.columns:
+            initial_allocation = datDaily[allocation_key].iloc[-1]
+          else:
+            initial_allocation = 0.0
+          new_alloc, carryover = district_obj.calc_carryover_from_pre(initial_allocation, -1, contract_obj.type, contract_obj.name, \
+          initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool)
+          contract_obj.tot_new_alloc += new_alloc
+          contract_obj.tot_carryover += carryover
+            
+
+      for private_obj in (self.private_list +self.city_list):
+        use_contract = 0
+        for contract_key in self.contract_keys:
+          if contract_key == contract_obj.name:
+            use_contract = 1
+        if use_contract == 1:	
+          for district_key in private_obj.district_list:
+            delivery_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_delivery"
+            carryover_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_carryover"
+            paper_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_paper"
+            turnback_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_turnback"
+            allocation_key = f"{contract_obj.name}_allocation"
+
+            if delivery_key_private in datDaily.columns:
+              initial_delivery = datDaily[delivery_key_private].iloc[-1]
+            else:
+              initial_delivery = 0.0
+            if carryover_key_private in datDaily.columns:
+              initial_carryover = datDaily[carryover_key_private].iloc[-1]
+            else:
+              initial_carryover = 0.0  
+            if paper_key_private in datDaily.columns:
+              initial_paper_balance = datDaily[paper_key_private].iloc[-1]
+            else:
+              initial_paper_balance = 0.0
+            if turnback_key_private in datDaily.columns:
+              initial_turnback_pool = datDaily[turnback_key_private].iloc[-1]
+            else:
+              initial_turnback_pool = 0.0
+            if allocation_key in datDaily.columns:
+              initial_allocation = datDaily[allocation_key].iloc[-1]
+            else:
+              initial_allocation = 0.0
+
+            new_alloc, carryover = private_obj.calc_carryover_from_pre(initial_allocation, -1, contract_obj.type, contract_obj.name, district_key, self.district_keys[district_key].project_contract, self.district_keys[district_key].rights, initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool)
+            contract_obj.tot_carryover += carryover
+            contract_obj.tot_new_alloc += new_alloc
+
 
 
 #####################################################################################################################
