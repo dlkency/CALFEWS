@@ -396,7 +396,7 @@ def regularize_covariance(covariance_matrix, epsilon=1e-6):
         raise ValueError("Unexpected covariance matrix dimensions for 'full' covariance type.")
     return covariance_matrix
 
-### generate a single synthetic realizaton of fnfs using MGHMM. Adapted from script by Rohini Gupta.
+### generate a single synthetic realizaton of fnfs using MGHMM. Adapted from script by Rohini Gupta/Andrew.
 def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
 
   ### use random num generator specific to this function to avoid overwriting global seed
@@ -572,7 +572,7 @@ def MGHMM_generate_trace(nYears, uncertainty_dict, drop_date=True):
   if drop_date:
     DailyQ_s.drop(['Year','Month','Day','realization'], axis=1, inplace=True)
  
-  return DailyQ_s, binary_states, closest_year
+  return AnnualQ_s, DailyQ_s, binary_states, closest_year
 
 
 

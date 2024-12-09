@@ -3793,7 +3793,7 @@ static PyObject *__pyx_int_100000;
 static PyObject *__pyx_int_155154233;
 static PyObject *__pyx_int_177872931;
 static PyObject *__pyx_int_194379979;
-static PyObject *__pyx_int_neg_2;
+static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_tuple__3;
@@ -4737,7 +4737,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       #self.Q = model.df[0]'HRO_pump'] * cfs_tafd
  *       self.dead_pool = 40             # <<<<<<<<<<<<<<
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  */
     __pyx_v_self->dead_pool = 40.0;
 
@@ -4745,7 +4745,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       #self.Q = model.df[0]'HRO_pump'] * cfs_tafd
  *       self.dead_pool = 40
  *       use_capacity = False             # <<<<<<<<<<<<<<
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]
  */
     __pyx_v_use_capacity = 0;
@@ -4753,7 +4753,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     /* "calfews_src/reservoir_cy.pyx":64
  *       self.dead_pool = 40
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)             # <<<<<<<<<<<<<<
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)             # <<<<<<<<<<<<<<
  *       storage_start_date_actual = model.df[0].index[0]
  * 
  */
@@ -4772,7 +4772,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_2) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_1) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
     __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4786,7 +4786,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
 
     /* "calfews_src/reservoir_cy.pyx":65
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]             # <<<<<<<<<<<<<<
  * 
  *       if storage_start_date in model.df_short[0].index:
@@ -5046,7 +5046,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       #self.Q = model.df[0]'TRP_pump'] * cfs_tafd
  *       self.dead_pool = 40             # <<<<<<<<<<<<<<
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  */
     __pyx_v_self->dead_pool = 40.0;
 
@@ -5054,7 +5054,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       #self.Q = model.df[0]'TRP_pump'] * cfs_tafd
  *       self.dead_pool = 40
  *       use_capacity = False             # <<<<<<<<<<<<<<
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]
  */
     __pyx_v_use_capacity = 0;
@@ -5062,7 +5062,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     /* "calfews_src/reservoir_cy.pyx":83
  *       self.dead_pool = 40
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)             # <<<<<<<<<<<<<<
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)             # <<<<<<<<<<<<<<
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:
  */
@@ -5081,7 +5081,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 83, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_2) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_1) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_empty_tuple, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -5095,7 +5095,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
 
     /* "calfews_src/reservoir_cy.pyx":84
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]             # <<<<<<<<<<<<<<
  *       if storage_start_date in model.df_short[0].index:
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -5115,7 +5115,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     __pyx_t_1 = 0;
 
     /* "calfews_src/reservoir_cy.pyx":85
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:             # <<<<<<<<<<<<<<
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -5171,7 +5171,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
       __pyx_t_1 = 0;
 
       /* "calfews_src/reservoir_cy.pyx":85
- *       storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days= -1)
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:             # <<<<<<<<<<<<<<
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -6286,7 +6286,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       self.fnf = [_ / 1000000.0 for _ in model.df[0]['%s_fnf'% key].values]
  *       self.R[0] = 0             # <<<<<<<<<<<<<<
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)
  */
     if (unlikely(__pyx_v_self->R == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -6298,7 +6298,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
  *       self.fnf = [_ / 1000000.0 for _ in model.df[0]['%s_fnf'% key].values]
  *       self.R[0] = 0
  *       use_capacity = False             # <<<<<<<<<<<<<<
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)
  *       storage_start_date_actual = model.df[0].index[0]
  */
     __pyx_v_use_capacity = 0;
@@ -6306,7 +6306,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     /* "calfews_src/reservoir_cy.pyx":124
  *       self.R[0] = 0
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)             # <<<<<<<<<<<<<<
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)             # <<<<<<<<<<<<<<
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:
  */
@@ -6325,7 +6325,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_2) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_days, __pyx_int_neg_1) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
     __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -6339,7 +6339,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
 
     /* "calfews_src/reservoir_cy.pyx":125
  *       use_capacity = False
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)
  *       storage_start_date_actual = model.df[0].index[0]             # <<<<<<<<<<<<<<
  *       if storage_start_date in model.df_short[0].index:
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -6359,7 +6359,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
     __pyx_t_9 = 0;
 
     /* "calfews_src/reservoir_cy.pyx":126
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:             # <<<<<<<<<<<<<<
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -6415,7 +6415,7 @@ static int __pyx_pf_11calfews_src_12reservoir_cy_9Reservoir_6__init__(struct __p
       __pyx_t_9 = 0;
 
       /* "calfews_src/reservoir_cy.pyx":126
- *       storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+ *       storage_start_date = model.df[0].index[0] + timedelta(days=-1)
  *       storage_start_date_actual = model.df[0].index[0]
  *       if storage_start_date in model.df_short[0].index:             # <<<<<<<<<<<<<<
  *         storage_start_index = model.df_short[0].index.get_loc(storage_start_date)
@@ -45989,7 +45989,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   __pyx_int_155154233 = PyInt_FromLong(155154233L); if (unlikely(!__pyx_int_155154233)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_177872931 = PyInt_FromLong(177872931L); if (unlikely(!__pyx_int_177872931)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_194379979 = PyInt_FromLong(194379979L); if (unlikely(!__pyx_int_194379979)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_neg_2 = PyInt_FromLong(-2); if (unlikely(!__pyx_int_neg_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;

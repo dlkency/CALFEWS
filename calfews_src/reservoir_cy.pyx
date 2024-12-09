@@ -61,7 +61,7 @@ cdef class Reservoir():
       #self.Q = model.df[0]'HRO_pump'] * cfs_tafd
       self.dead_pool = 40
       use_capacity = False
-      storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+      storage_start_date = model.df[0].index[0] + timedelta(days= -1)
       storage_start_date_actual = model.df[0].index[0]
       
       if storage_start_date in model.df_short[0].index: 
@@ -80,7 +80,7 @@ cdef class Reservoir():
       #self.Q = model.df[0]'TRP_pump'] * cfs_tafd
       self.dead_pool = 40
       use_capacity = False
-      storage_start_date = model.df[0].index[0] + timedelta(days= -2)
+      storage_start_date = model.df[0].index[0] + timedelta(days= -1)
       storage_start_date_actual = model.df[0].index[0]
       if storage_start_date in model.df_short[0].index: 
         storage_start_index = model.df_short[0].index.get_loc(storage_start_date) 
@@ -121,7 +121,7 @@ cdef class Reservoir():
       self.fnf = [_ / 1000000.0 for _ in model.df[0]['%s_fnf'% key].values]
       self.R[0] = 0
       use_capacity = False
-      storage_start_date = model.df[0].index[0] + timedelta(days=-2)
+      storage_start_date = model.df[0].index[0] + timedelta(days=-1)
       storage_start_date_actual = model.df[0].index[0]
       if storage_start_date in model.df_short[0].index: 
         storage_start_index = model.df_short[0].index.get_loc(storage_start_date) 
