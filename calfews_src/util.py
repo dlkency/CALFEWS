@@ -233,6 +233,14 @@ def model_attribute_loop_generator(clean_output, modelno, modelso):
       except:
         pass
 
+  for leiu_obj in modelso.leiu_list:
+    for partner_key, partner_series in leiu_obj.bank_timeseries.items():
+      try:
+        att, name = model_attribute_nonzero(partner_series, np.string_(leiu_obj.name + '_' + partner_key), clean_output)
+        if list(att):
+          yield list(att), name              
+      except:
+        pass
 
   ### output timeseries for canals
   for canal_obj in modelso.canal_list:

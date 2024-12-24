@@ -1733,10 +1733,15 @@ cdef class Model():
         district_filename = id_dict[district_obj.key]
         pesticide_data = pd.read_csv('calfews_src/data/input/pesticide_acreage/' + district_filename + '.csv', index_col = 0)
         data_start_year = 0
+        last_read_year = 0
         for crop_type in pesticide_data:
           district_obj.acreage_by_year[crop_type] = np.zeros(self.number_years)
           for y in range(0, self.number_years):
-            district_obj.acreage_by_year[crop_type][y] = pesticide_data[crop_type][y+data_start_year]
+            try:
+              district_obj.acreage_by_year[crop_type][y] = pesticide_data[crop_type][y+data_start_year]
+              last_read_year = y+data_start_year
+            except:
+              district_obj.acreage_by_year[crop_type][y] = pesticide_data[crop_type][last_read_year]
 
 
   def load_pmp_model(self):
@@ -1883,7 +1888,8 @@ cdef class Model():
     urban_list = [self.socal, self.centralcoast, self.southbay]
     self.observed_hro = (df_urban['HRO_pump'].values *cfs_tafd).tolist()
     self.observed_trp = (df_urban['TRP_pump'].values *cfs_tafd).tolist()
-    self.observed_hro_pred = df_pumping_prediction_control['DEL_SWP_allocation'].tolist()
+    #self.observed_hro_pred = df_pumping_prediction_control['DEL_SWP_allocation'].tolist()
+    self.observed_hro_pred = (df_urban['HRO_pump'].values *cfs_tafd).tolist()
     SRI_forecast = df_urban['DEL_SCINDEX'].values
     regression_annual_hro = [0.0 for _ in range(numYears_urban)]
     regression_annual_trp = [0.0 for _ in range(numYears_urban)]
@@ -1913,7 +1919,10 @@ cdef class Model():
       m = index_urban_m[xx]
       wateryear = index_urban_water_year[xx]
       year_index = index_urban_y[xx]-urban_startYear
-      hist_pumping[self.southbay][xx] += df_urban_monthly_cvp['PCH_pump'][m-1 + wateryear*12]*1000.0/urban_days_in_month[year_index][m-1]
+      try:
+        hist_pumping[self.southbay][xx] += df_urban_monthly_cvp['PCH_pump'][m-1 + wateryear*12]*1000.0/urban_days_in_month[year_index][m-1]
+      except:
+        hist_pumping[self.southbay][xx] = 2.0 * hist_pumping[self.southbay][xx]
 
     for t in range(0,urban_historical_T):
       wateryear = index_urban_water_year[t]
@@ -1930,7 +1939,7 @@ cdef class Model():
       district_obj.annual_pumping = {}
       district_obj.annual_pumping[0] = regression_annual[district_obj]
 
-    metropolitan_demand = [584.0, 352.0, 681.0, 1252.0, 1075.5, 1408.8, 1592.0, 1865.7, 1431.1, 1501.6, 1646.8, 1077.5, 1020.2, 1123.1, 1335.7, 1065.6, 989.1, 476.8, 704.8, 1106.4]
+    metropolitan_demand = [584.0, 352.0, 681.0, 1252.0, 1075.5, 1408.8, 1592.0, 1865.7, 1431.1, 1501.6, 1646.8, 1077.5, 1020.2, 1123.1, 1335.7, 1065.6, 989.1, 476.8, 704.8, 1106.4, 1500.0, 1000.0, 1400.0, 750.0, 500.0, 500.0, 1750, 1500.]
     if self.model_mode == 'validation':      
       metropolitan_adjust = self.starting_year - 1996
     else:
@@ -1989,14 +1998,20 @@ cdef class Model():
       for t in range(0, urban_historical_T):
         wateryear = index_urban_water_year[t]
         dowy = index_urban_dowy[t]
-        regression_percent[district_obj][dowy][wateryear] = district_obj.annual_pumping[0][wateryear]/self.observed_hro_pred[t]
+        if self.observed_hro_pred[t] < 1.4 or pd.isna(self.observed_hro_pred[t]):
+          regression_percent[district_obj][dowy][wateryear] = district_obj.annual_pumping[0][wateryear]/1.4
+        else:
+          regression_percent[district_obj][dowy][wateryear] = district_obj.annual_pumping[0][wateryear]/self.observed_hro_pred[t]
 		  
     for private_obj in self.city_list:
       for district_key in private_obj.district_list:
         for t in range(0, urban_historical_T):
           wateryear = index_urban_water_year[t]
           dowy = index_urban_dowy[t]
-          regression_percent[private_obj][district_key][dowy][wateryear] = private_obj.annual_pumping[district_key][wateryear]/self.observed_hro_pred[t]		
+          if self.observed_hro_pred[t] < 1.4 or pd.isna(self.observed_hro_pred[t]):
+            regression_percent[private_obj][district_key][dowy][wateryear] = private_obj.annual_pumping[district_key][wateryear]/1.4		
+          else:
+            regression_percent[private_obj][district_key][dowy][wateryear] = private_obj.annual_pumping[district_key][wateryear]/self.observed_hro_pred[t]		
 
     sri_forecast_dowy = np.zeros((365,numYears_urban))
     pumping_forecast_dowy = np.zeros((365, numYears_urban))
@@ -2887,7 +2902,14 @@ cdef class Model():
         next_year_carryover, this_year_carryover = district_obj.update_balance(t, wateryear, contract_obj.storage_pool[t], contract_obj.allocation[t], contract_obj.available_water[t], contract_obj.name, contract_obj.tot_carryover, contract_obj.type)
         next_year_carryover, this_year_carryover = self.buenavista.update_balance(t, wateryear, contract_obj.storage_pool[t], contract_obj.allocation[t], contract_obj.available_water[t], contract_obj.name, contract_obj.tot_carryover, contract_obj.type)
 
-
+    for private_obj in self.city_list + self.private_list:
+      for contract_obj in self.contract_list:
+        average_projected = 0.0
+        for district_name in private_obj.district_list:
+          average_projected += (private_obj.projected_supply[district_name][contract_obj.name] - private_obj.annualdemand[district_name]) / float(len(private_obj.district_list))
+        for district_name in private_obj.district_list:
+          private_obj.paper_balance[district_name][contract_obj.name] += average_projected - (private_obj.projected_supply[district_name][contract_obj.name] - private_obj.annualdemand[district_name])
+		  
     #Find district banking needs
     self.set_canal_direction(flow_type)
     for district_obj in self.district_list:
@@ -5608,7 +5630,7 @@ cdef class Model():
   cdef void initialize_district_contract_carryovers(self):
     ### add something to read validation hdf5 file
     cdef:
-      double initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool, initial_allocation
+      double initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool, initial_allocation, initial_projected
       str trace, delivery_key, carryover_key, paper_key, turnback_key, allocation_key
       District district_obj
       Private private_obj
@@ -5643,6 +5665,7 @@ cdef class Model():
             use_contract = 1
         if use_contract == 1:
           delivery_key = f"{district_obj.name}_{contract_obj.name}_delivery"
+          projected_key = f"{district_obj.name}_{contract_obj.name}_projected"
           carryover_key = f"{district_obj.name}_{contract_obj.name}_carryover"
           paper_key = f"{district_obj.name}_{contract_obj.name}_paper"
           turnback_key = f"{district_obj.name}_{contract_obj.name}_turnback"
@@ -5651,6 +5674,10 @@ cdef class Model():
             initial_delivery = datDaily[delivery_key].iloc[-1]
           else:
             initial_delivery = 0.0
+          if projected_key in datDaily.columns:
+            initial_projected = datDaily[projected_key].iloc[-1]
+          else:
+            initial_projected = 0.0
           if carryover_key in datDaily.columns:
             initial_carryover = datDaily[carryover_key].iloc[-1]
           else:
@@ -5667,8 +5694,7 @@ cdef class Model():
             initial_allocation = datDaily[allocation_key].iloc[-1]
           else:
             initial_allocation = 0.0
-          new_alloc, carryover = district_obj.calc_carryover_from_pre(initial_allocation, -1, contract_obj.type, contract_obj.name, \
-          initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool)
+          new_alloc, carryover = district_obj.calc_carryover_from_pre(-1, contract_obj.type, contract_obj.name, initial_projected)
           contract_obj.tot_new_alloc += new_alloc
           contract_obj.tot_carryover += carryover
             
@@ -5680,16 +5706,20 @@ cdef class Model():
             use_contract = 1
         if use_contract == 1:	
           for district_key in private_obj.district_list:
-            delivery_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_delivery"
-            carryover_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_carryover"
-            paper_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_paper"
-            turnback_key_private = f"{private_obj.name}_{district_obj.name}_{contract_key}_turnback"
+            delivery_key_private = f"{private_obj.name}_{district_key}_{contract_obj.name}_delivery"
+            projected_key_private = f"{private_obj.name}_{district_key}_{contract_obj.name}_projected"
+            carryover_key_private = f"{private_obj.name}_{district_key}_{contract_obj.name}_carryover"
+            paper_key_private = f"{private_obj.name}_{district_key}_{contract_obj.name}_paper"
+            turnback_key_private = f"{private_obj.name}_{district_key}_{contract_obj.name}_turnback"
             allocation_key = f"{contract_obj.name}_allocation"
-
             if delivery_key_private in datDaily.columns:
               initial_delivery = datDaily[delivery_key_private].iloc[-1]
             else:
               initial_delivery = 0.0
+            if projected_key_private in datDaily.columns:
+              initial_projected = datDaily[projected_key_private].iloc[-1]
+            else:
+              initial_projected = 0.0
             if carryover_key_private in datDaily.columns:
               initial_carryover = datDaily[carryover_key_private].iloc[-1]
             else:
@@ -5707,7 +5737,7 @@ cdef class Model():
             else:
               initial_allocation = 0.0
 
-            new_alloc, carryover = private_obj.calc_carryover_from_pre(initial_allocation, -1, contract_obj.type, contract_obj.name, district_key, self.district_keys[district_key].project_contract, self.district_keys[district_key].rights, initial_delivery, initial_carryover, initial_paper_balance, initial_turnback_pool)
+            new_alloc, carryover = private_obj.calc_carryover_from_pre(-1, contract_obj.type, contract_obj.name, district_key, initial_projected)
             contract_obj.tot_carryover += carryover
             contract_obj.tot_new_alloc += new_alloc
 

@@ -413,13 +413,13 @@ cdef class Private():
       #annual allocation - remaining (undelivered) district share of expected total contract allocation
 	    #same as above, but projected_allocation*self.project_contract[key] - individual share of expected total contract allocation, this includes contract water that has already been delivered to all contractors
       annual_allocation = projected_allocation*project_contract[key]*self.private_fraction[district_name][wateryear] - self.deliveries[district_name][key][wateryear] + self.paper_balance[district_name][key] + self.carryover[district_name][key] + self.turnback_pool[district_name][key]
-      storage_balance = current_water*project_contract[key]*self.private_fraction[district_name][wateryear] + self.paper_balance[district_name][key] + max(self.carryover[district_name][key] + self.turnback_pool[district_name][key] - self.deliveries[district_name][key][wateryear], 0.0)
+      storage_balance = current_water*project_contract[key]*self.private_fraction[district_name][wateryear] + max(min(self.paper_balance[district_name][key],current_water), 0.0) + max(self.carryover[district_name][key] + self.turnback_pool[district_name][key] - self.deliveries[district_name][key][wateryear], 0.0)
 
     elif balance_type == 'right':
       #same as above, but for contracts that are expressed as 'rights' instead of allocations
       district_storage = (water_available-tot_carryover)*rights[key]['capacity']*self.private_fraction[district_name][wateryear] - self.deliveries[district_name][key][wateryear] + self.paper_balance[district_name][key] + self.carryover[district_name][key] + self.turnback_pool[district_name][key]
       annual_allocation = projected_allocation*rights[key]['capacity']*self.private_fraction[district_name][wateryear] - self.deliveries[district_name][key][wateryear] + self.paper_balance[district_name][key] + self.carryover[district_name][key] + self.turnback_pool[district_name][key]
-      storage_balance = current_water*rights[key]['capacity']*self.private_fraction[district_name][wateryear] + self.paper_balance[district_name][key] + max(self.carryover[district_name][key] + self.turnback_pool[district_name][key] - self.deliveries[district_name][key][wateryear], 0.0)
+      storage_balance = current_water*rights[key]['capacity']*self.private_fraction[district_name][wateryear] + max(min(self.paper_balance[district_name][key],current_water), 0.0) + max(self.carryover[district_name][key] + self.turnback_pool[district_name][key] - self.deliveries[district_name][key][wateryear], 0.0)
     
     self.current_balance[district_name][key] = storage_balance
     self.projected_supply[district_name][key] = annual_allocation
@@ -518,23 +518,17 @@ cdef class Private():
     self.carryover[district_name][key] = carryover
     self.turnback_pool[district_name][key] = 0.0	
     self.paper_balance[district_name][key] = 0.0
-	
     return reallocated_water, carryover
 
-  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool):
+  cdef (double, double) calc_carryover_from_pre(self, int wateryear, str balance_type, str key, str district_name, double initial_projected):
     #at the end of each wateryear, we tally up the full allocation to the contract, how much was used (and moved around in other balances - carryover, 'paper balance' and turnback_pools) to figure out how much each district can 'carryover' to the next year
     cdef:
       double annual_allocation, max_carryover, reallocated_water, carryover
 
-    if balance_type == 'contract':
-      annual_allocation = existing_balance*project_contract[key]*self.private_fraction[district_name][wateryear]  - initial_delivery + initial_carryover + initial_paper_balance + initial_turnback_pool 
-      max_carryover = self.contract_carryover_list[district_name][key]
-    elif balance_type == 'right':
-      annual_allocation = existing_balance*rights[key]['capacity']*self.private_fraction[district_name][wateryear]  - initial_delivery + initial_carryover + initial_paper_balance + initial_turnback_pool 
-      max_carryover = self.contract_carryover_list[district_name][key]
+    max_carryover = self.contract_carryover_list[district_name][key]
 	  
-    reallocated_water = max(annual_allocation - max_carryover, 0.0)
-    carryover = min(max_carryover, annual_allocation)
+    reallocated_water = max(initial_projected - max_carryover, 0.0)
+    carryover = min(max_carryover, initial_projected)
     self.carryover[district_name][key] = carryover
     self.turnback_pool[district_name][key] = 0.0	
     self.paper_balance[district_name][key] = 0.0
@@ -550,7 +544,7 @@ cdef class Private():
   cdef void open_recovery(self, int t, int dowy, int wateryear, int number_years, str wyt, int use_delivery_tolerance, double additional_carryover):
     #this function determines if a district wants to recover banked water based on their demands and existing supplies
     cdef:
-      double delivery_tolerance, total_balance, total_deliveries, total_needs, total_remaining_carryover, total_recovery
+      double delivery_tolerance, total_balance, total_shortfall, int_shortfall, total_deliveries, total_needs, total_remaining_carryover, total_recovery
       int risk_index, x
       str district_key, contract_key
 
@@ -574,20 +568,26 @@ cdef class Private():
     total_balance = 0.0
     total_deliveries = 0.0
     total_needs = 0.0
+    total_shortfall = 0.0
     for district_key in self.district_list:
       total_remaining_carryover = 0.0
+      int_shortfall = 0.0
       for contract_key in self.contract_list:
         total_balance += self.projected_supply[district_key][contract_key]
         total_deliveries += self.deliveries[district_key][contract_key][wateryear]
         total_remaining_carryover += max(self.carryover[district_key][contract_key] - self.deliveries[district_key][contract_key][wateryear], 0.0)
+        int_shortfall -= self.projected_supply[district_key][contract_key]
       total_deliveries += self.deliveries[district_key]['recover_banked'][wateryear]
       if total_remaining_carryover < 0.1:
         total_needs += self.annualdemand[district_key]*self.seepage[district_key]*self.recovery_fraction
+        int_shortfall += self.annualdemand[district_key]*self.seepage[district_key]*self.recovery_fraction
+      if int_shortfall > 0.0:
+        total_shortfall += int_shortfall
     total_recovery = (366-dowy)*self.max_recovery + self.max_leiu_exchange
     self.recovery_capacity_remain = total_recovery
     total_needs += additional_carryover
 
-    if (total_balance + total_recovery) < total_needs and (total_balance + total_deliveries) < (self.target_annual_demand[wateryear] - delivery_tolerance):
+    if total_recovery < total_shortfall and (total_balance + total_deliveries) < (self.target_annual_demand[wateryear] - delivery_tolerance):
       if total_needs > self.epsilon:
         self.use_recovery = min(max(total_recovery/total_needs, 0.0), 1.0)
       else:

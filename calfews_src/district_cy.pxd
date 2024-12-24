@@ -57,7 +57,7 @@ cdef class District():
 
   cdef (double, double) calc_carryover(self, double existing_balance, int wateryear, str balance_type, str key)
 
-  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool)
+  cdef (double, double) calc_carryover_from_pre(self, int wateryear, str balance_type, str key, double initial_projected)
 
   cdef void open_recovery(self, int t, int dowy, int wateryear, double target_eoy)
 

@@ -47,7 +47,7 @@ cdef class Private():
 
   cdef (double, double) calc_carryover(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights)
 
-  cdef (double, double) calc_carryover_from_pre(self, double existing_balance, int wateryear, str balance_type, str key, str district_name, dict project_contract, dict rights, double initial_delivery, double initial_carryover, double initial_paper_balance, double initial_turnback_pool)
+  cdef (double, double) calc_carryover_from_pre(self, int wateryear, str balance_type, str key, str district_name, double initial_projected)
 
   cdef void open_recovery(self, int t, int dowy, int wateryear, int number_years, str wyt, int use_delivery_tolerance, double additional_carryover)
 

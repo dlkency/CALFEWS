@@ -56,9 +56,13 @@ class Visualizer():
         year_str = self.year_o[x] - 1
       if self.month_o[x] == 9 and self.day_month_o[x] == 30:
         year_str = self.year_o[x]
-      total_bank_kwb[x] = kern_bank_observations.loc[year_str, 'Ag'] + kern_bank_observations.loc[year_str, 'Mixed Purpose']
-      deposit_history = semitropic_bank_observations[semitropic_bank_observations.index <= year_str]      
-      total_bank_smi[x] = deposit_history['Metropolitan'].sum() + deposit_history['South Bay'].sum()
+      try:
+        total_bank_kwb[x] = kern_bank_observations.loc[year_str, 'Ag'] + kern_bank_observations.loc[year_str, 'Mixed Purpose']
+        deposit_history = semitropic_bank_observations[semitropic_bank_observations.index <= year_str]      
+        total_bank_smi[x] = deposit_history['Metropolitan'].sum() + deposit_history['South Bay'].sum()
+      except:
+        print('no bank obs ', end = " ")
+        print(x)
 
     self.observations['kwb_accounts'] = pd.Series(total_bank_kwb, index=self.observations.index)
     self.observations['smi_accounts'] = pd.Series(total_bank_smi, index=self.observations.index)
@@ -77,9 +81,9 @@ class Visualizer():
           names.extend(names_int_col)
         except:
           pass
-      df_data = pd.DataFrame(data[:], columns=names)
-      for x in df_data:
-        self.values[x] = df_data[x]
+      self.values = pd.DataFrame(data[:], columns=names)
+      #for x in df_data:
+        #self.values[x] = df_data[x]
 
     datetime_index = []
     monthcount = start_month
@@ -87,7 +91,7 @@ class Visualizer():
     daycount = start_day
     leapcount = np.remainder(start_year, 4)
 
-    for t in range(0, len(self.values[x])):
+    for t in range(0, len(self.values.index)):
       datetime_index.append(str(yearcount) + '-' + str(monthcount) + '-' + str(daycount))
       daycount += 1
       if leapcount == 0 and monthcount == 2:
@@ -104,9 +108,9 @@ class Visualizer():
         if leapcount == 4:
           leapcount = 0
 
-    self.values['Datetime'] = pd.to_datetime(datetime_index)
-    self.values = pd.DataFrame(self.values)
-    self.values = self.values.set_index('Datetime')
+    self.values.index = pd.to_datetime(datetime_index)
+    #self.values = pd.DataFrame(self.values)
+    #self.values = self.values.set_index('Datetime')
     self.index = self.values.index
     self.T = len(self.values.index)
     self.day_year = self.index.dayofyear
