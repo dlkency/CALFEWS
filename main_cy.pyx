@@ -164,7 +164,7 @@ cdef class main_cy():
       except:
         pass
     gc.collect()
-    use_validation_init = False
+    use_validation_init = True
     if use_validation_init:    
       self.modelso.initialize_district_contract_carryovers()
 
