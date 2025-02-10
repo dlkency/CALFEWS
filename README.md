@@ -1,5 +1,12 @@
+# Water Index Futures
+This repository contains code and data for the following paper:
+
+Li, Dan, Zeff, H.B., & Characklis, G.W. (2022). Managing Drought-related Financial Risks with Water Index Futures. (In review)
+
+
 # California Food-Energy-Water System (CALFEWS)
-This repository contains all code and data for the California Food-Energy-Water System (CALFEWS), an open-sourced, Python/Cython-based model for simulating the integrated, multi-sector dynamics of water supply in the Central Valley of California.  CALFEWS captures system dynamics across multiple scales, from coordinated management of inter-basin water supply projects at the state and regional scale, to agent-based representation of conjunctive surface water and groundwater supplies at the scale of irrigation and water storage districts. Its flexible, adaptive, rules-based representation allows CALFEWS to explore alternative climate, infrastructure, and regulation scenarios, and it is also interoperable with power dispatch and agricultural production models. This tool can provide decision-makers and analysts with a platform to generate a wide range of internally consistent scenarios for the integrated management of water supply, energy generation, and food production.
+The original repository contains all code and data for the California Food-Energy-Water System (CALFEWS) can be found on https://github.com/hbz5000/CALFEWS.
+CALFEWS is an open-sourced, Python/Cython-based model for simulating the integrated, multi-sector dynamics of water supply in the Central Valley of California.  CALFEWS captures system dynamics across multiple scales, from coordinated management of inter-basin water supply projects at the state and regional scale, to agent-based representation of conjunctive surface water and groundwater supplies at the scale of irrigation and water storage districts. Its flexible, adaptive, rules-based representation allows CALFEWS to explore alternative climate, infrastructure, and regulation scenarios, and it is also interoperable with power dispatch and agricultural production models. This tool can provide decision-makers and analysts with a platform to generate a wide range of internally consistent scenarios for the integrated management of water supply, energy generation, and food production.
 
 More information on the CALFEWS model, and comparison of model output to historical data, can be found in the following manuscript:
 
